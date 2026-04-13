@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<title>BES Pro Hesaplama</title>
+
+<style>
+body {
+  font-family: Arial;
+  background: linear-gradient(135deg,#667eea,#764ba2);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+  margin:0;
+}
+.container {
+  background:white;
+  padding:25px;
+  border-radius:15px;
+  width:350px;
+  box-shadow:0 10px 25px rgba(0,0,0,0.2);
+}
+h2 { text-align:center; }
+input, select {
+  width:100%;
+  margin:6px 0;
+  padding:8px;
+}
+button {
+  width:100%;
+  padding:10px;
+  background:#4CAF50;
+  color:white;
+  border:none;
+  cursor:pointer;
+}
+button:hover {
+  background:#45a049;
+}
+.result {
+  margin-top:15px;
+}
+</style>
+
+</head>
+<body>
+
+<div class="container">
+<h2>BES Pro Hesaplama</h2>
+
+<input type="number" id="yas" placeholder="Yaş">
+<input type="number" id="emekli" placeholder="Emeklilik Yaşı">
+
+<select id="odeme">
+  <option value="12">Aylık</option>
+  <option value="4">3 Aylık</option>
+  <option value="2">6 Aylık</option>
+  <option value="1">Yıllık</option>
+</select>
+
+<input type="number" id="katki" placeholder="Katkı Payı (TL)">
+<input type="number" id="artis" placeholder="Yıllık Artış (%)">
+<input type="number" id="getiri" placeholder="Yıllık Reel Getiri (%)">
+
+<button onclick="hesapla()">Hesapla</button>
+
+<div class="result">
+<p id="toplam"></p>
+<p id="yatirilan"></p>
+<p id="devlet"></p>
+</div>
+
+</div>
+
+<script>
+function hesapla() {
+  let yas = Number(document.getElementById("yas").value);
+  let emekli = Number(document.getElementById("emekli").value);
+  let donem = Number(document.getElementById("odeme").value);
+  let katki = Number(document.getElementById("katki").value);
+  let artis = Number(document.getElementById("artis").value) / 100;
+  let getiri = Number(document.getElementById("getiri").value) / 100;
+
+  let yil = emekli - yas;
+
+  let toplam = 0;
+  let yatirilan = 0;
+
+  for (let i = 0; i < yil; i++) {
+    for (let j = 0; j < donem; j++) {
+      toplam += katki;
+      yatirilan += katki;
+    }
+    toplam = toplam * (1 + getiri);
+    katki = katki * (1 + artis);
+  }
+
+  let devletKatkisi = yatirilan * 0.30;
+  let genelToplam = toplam + devletKatkisi;
+
+  document.getElementById("toplam").innerText =
+    "Toplam Birikim (Devlet Dahil): " + Math.round(genelToplam) + " TL";
+
+  document.getElementById("yatirilan").innerText =
+    "Toplam Yatırılan: " + Math.round(yatirilan) + " TL";
+
+  document.getElementById("devlet").innerText =
+    "Devlet Katkısı (%30): " + Math.round(devletKatkisi) + " TL";
+}
+</script>
+
+</body>
+</html>
